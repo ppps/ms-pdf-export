@@ -1,12 +1,10 @@
-# ms-pdf-export
-
-## Morning Star smart PDF export
+# Morning Star smart PDF export
 
 This handy little AppleScript gets the working InDesign pages and exports them as a PDF using Trinity Mirror’s preset to a properly-named subfolder of the edition folder.
 
 All that’s left to do is to send it to the printers.
 
-### Suggested use
+## Suggested use
 
 It’s most useful when given a keyboard shortcut. To do this in InDesign open up the Scripts palette, select the User folder and choose Reveal in Finder from the palette’s menu. Copy the .scpt file into this folder. Then switch back to InDesign and select Keyboard Shortcuts from the Edit menu, pick scripts from the Product Area drop-down menu and scroll down to the bottom to find the script. You can then select it and assign a keyboard shortcut to it.
 
