@@ -1,4 +1,7 @@
-ms-pdf-export
-=============
+# ms-pdf-export
 
-An AppleScript to export the working pages as a PDF using Trinity Mirror’s preset, ready to send for printing.
+## Morning Star smart PDF export
+
+This handy little AppleScript gets the working InDesign pages and exports them as a PDF using Trinity Mirror’s preset to a properly-named subfolder of the edition folder.
+
+All that’s left to do is to send it to the printers.
