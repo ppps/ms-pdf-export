@@ -45,6 +45,6 @@ end tell
 
 tell application "Adobe InDesign CS5.5"
 	tell document fileName
-		export format PDF type to (pdfsFolder & pdfName) using TMP
+		asynchronous export file format PDF type to (pdfsFolder & pdfName) using TMP
 	end tell
 end tell
