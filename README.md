@@ -1,16 +1,17 @@
 # Morning Star smart PDF export
 
-This handy little AppleScript gets the working InDesign pages and exports them as a PDF using Trinity Mirror’s preset to a properly-named subfolder of the edition folder.
+## Trinity PDF.scpt
 
-All that’s left to do is to send it to the printers.
+Exports pages for the printers, using Trinity Mirror's preset. As of v1.1, it asks the user whether she wants to export a spread, left or right page. The resulting .pdf is saved to date-named subfolder in the InDesign file's directory.
+
+## Web PDF.app
+
+Exports pages using InDesign's built-in smallest file size preset, intended for use when combining the pages for the Star's online .pdf edition. Files are saved into a date-named subfolder in the InDesign files' directory. (The Trinity and Web .pdf folders have different prefixes, so using one script will not overwrite the files produced by the other.)
 
 ## Suggested use
 
-It’s most useful when given a keyboard shortcut. To do this in InDesign open up the Scripts palette, select the User folder and choose Reveal in Finder from the palette’s menu. Copy the .scpt file into this folder. Then switch back to InDesign and select Keyboard Shortcuts from the Edit menu, pick scripts from the Product Area drop-down menu and scroll down to the bottom to find the script. You can then select it and assign a keyboard shortcut to it.
+The Trinity exporter works best when given a keyboard shortcut. If you add it to InDesign's scripts panel you can then assign a shortcut through Keyboard Shortcuts in the edit menu. However, I prefer to use it through [FastScripts][fs].
 
-Alternatively, if you use the Quick Apply box, enable Include Scripts and you can select it through that. (You may want to ditch all the sample scripts to reduce the clutter, however.)
+[fs]: http://www.red-sweater.com/fastscripts/
 
-*Or* if you use [FastScripts][fc] or [LaunchBar][lb], or whatever, you can just chuck it in with them and it works fine.
-
-[fc]: http://www.red-sweater.com/fastscripts/
-[lb]: http://www.obdev.at/products/launchbar/index.html
+I recommend saving the web .pdf exporter as an .app file (from AppleScript Editor or Script Debugger). You can the run it as you would any other application, where it presents a file picker, or drop the files you wish to export onto it.
