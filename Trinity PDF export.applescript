@@ -1,22 +1,23 @@
 --	TrinityMirror PDF export script for the Morning Star
 
 --	Written by		Rob Wells
---	Created on		07/07/2012
---	Last updated		25/01/2013
+--	Created on		2012-07-07
+--	Last updated		2013-03-16
 
 tell application "Adobe InDesign CS5.5"
 	set TMP to PDF export preset "TMP_indesign_v2"
 	-- Export settings are held by the application, not the document
 	
-	-- Count the pages and set an appropriate export range
+	-- Count the pages and ask the user for the export range
 	set c to (count the pages in the active document)
 	tell PDF export preferences -- Also an application-wide setting
+		-- Set the page range
 		if c is 1 then
-			set page range to "1" -- Common
+			set page range to "1" -- Single page is common
 		else if c is 2 then
-			set page range to "1-2" -- Included for safety
+			set page range to (my pagePrompt("1-2")) -- 1-2 spread included for safety
 		else if c is 3 then
-			set page range to "2-3" -- Common
+			set page range to (my pagePrompt("2-3")) -- 2-3 spread is common
 		end if
 	end tell
 	
@@ -24,13 +25,12 @@ tell application "Adobe InDesign CS5.5"
 		set filePath to the file path as string
 		set fileName to the name
 	end tell
-	
 end tell
 
 -- Extract the date from the filename
 set editionDate to text ((offset of "." in fileName) - 6) through ((offset of "." in fileName) - 1) of fileName
 
-set pdfName to ((text 1 through ((count of characters in fileName) - 5) of fileName) & ".pdf")
+set pdfName to my makePdfName(fileName)
 
 tell application "Finder"
 	-- Check if the PDF folder has already been created
@@ -48,3 +48,61 @@ tell application "Adobe InDesign CS5.5"
 		export format PDF type to (pdfsFolder & pdfName) using TMP
 	end tell
 end tell
+
+-- Ask the user which page to export if a spread
+-- Allows the left and right pages to be saved independently
+on pagePrompt(spreadPages)
+	set pagesList to {"Spread", "Left page only", "Right page only"}
+	
+	-- Customise the page prompt with the real page numbers (but not every page has one)
+	tell application "Adobe InDesign CS5.5"
+		tell the active document
+			set leftNum to the contents of text frame "L-Page number"
+			set rightNum to the contents of text frame "R-Page number"
+			
+			if leftNum is not "X" then
+				set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
+			end if
+			if rightNum is not "X" then
+				set item 3 of pagesList to (item 3 of pagesList & " (P" & rightNum & ")")
+			end if
+		end tell
+	end tell
+	
+	set chosenPage to (choose from list pagesList with title "Trinity .pdf exporter" with prompt "What do you want to export?" default items (item 1 of pagesList)) as text
+	if the result is "false" then error number -128 -- Enable the cancel button
+	
+	if chosenPage starts with "Spread" then
+		set exportPage to spreadPages
+	else if chosenPage starts with "Left page only" then
+		set exportPage to the first character of spreadPages
+	else if chosenPage starts with "Right page only" then
+		set exportPage to the third character of spreadPages
+	end if
+	
+	return exportPage
+	
+end pagePrompt
+
+
+on makePdfName(fileName)
+	tell application "Adobe InDesign CS5.5"
+		set c to (count the pages in the active document)
+		set pageRange to (page range of PDF export preferences)
+		
+		-- Split the filename at its page-number prefix
+		set thePrefix to (text 1 through ((offset of "_" in fileName) - 1) of fileName)
+		set theBody to (text (offset of "_" in fileName) through ((the length of fileName) - 5) of fileName)
+		
+		-- Check if the user wants to export a single page from a multi-page file
+		if (thePrefix contains "-") and (pageRange does not contain "-") then
+			-- For spreads, the last page is a right-hand page, and therefore the second part of the page-number prefix
+			if c is equal to (pageRange as number) then
+				set thePrefix to (text ((offset of "-" in thePrefix) + 1) through (the length of thePrefix)) of thePrefix
+			else
+				set thePrefix to (text 1 through ((offset of "-" in thePrefix) - 1) of thePrefix)
+			end if
+		end if
+		set pdfName to thePrefix & theBody & ".pdf"
+	end tell
+end makePdfName
