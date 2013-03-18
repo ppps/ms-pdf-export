@@ -81,7 +81,6 @@ on pagePrompt(spreadPages)
 	end if
 	
 	return exportPage
-	
 end pagePrompt
 
 
@@ -103,6 +102,6 @@ on makePdfName(fileName)
 				set thePrefix to (text 1 through ((offset of "-" in thePrefix) - 1) of thePrefix)
 			end if
 		end if
-		set pdfName to thePrefix & theBody & ".pdf"
+		return thePrefix & theBody & ".pdf"
 	end tell
 end makePdfName
