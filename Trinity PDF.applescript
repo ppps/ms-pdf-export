@@ -57,15 +57,18 @@ on pagePrompt(spreadPages)
 	-- Customise the page prompt with the real page numbers (but not every page has one)
 	tell application "Adobe InDesign CS5.5"
 		tell the active document
-			set leftNum to the contents of text frame "L-Page number"
-			set rightNum to the contents of text frame "R-Page number"
-			
-			if leftNum is not "X" then
+			try -- Supresses error if text frame doesn't exist
+				set leftNum to the contents of text frame "L-Page number"
+				-- Check that is is a number ("X" used as a placeholder)
+				get leftNum as number
+				-- Append to page prompt
 				set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
-			end if
-			if rightNum is not "X" then
+			end try
+			try
+				set rightNum to the contents of text frame "R-Page number"
+				get rightNum as number
 				set item 3 of pagesList to (item 3 of pagesList & " (P" & rightNum & ")")
-			end if
+			end try
 		end tell
 	end tell
 	
