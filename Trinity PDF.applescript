@@ -59,7 +59,7 @@ on pagePrompt(spreadPages)
 		tell the active document
 			try -- Supresses error if text frame doesn't exist
 				set leftNum to the contents of text frame "L-Page number"
-				-- Check that is is a number ("X" used as a placeholder)
+				-- Check that is is a number ("X" used as a placeholder, and InDesign checks the masters if it doesn't find the frame on page)
 				get leftNum as number
 				-- Append to page prompt
 				set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
