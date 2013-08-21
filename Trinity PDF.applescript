@@ -2,9 +2,9 @@
 
 --	Written by		Rob Wells
 --	Created on		2012-07-07
---	Last updated		2013-03-16
+--	Last updated		2013-08-21
 
-tell application "Adobe InDesign CS5.5"
+tell application "Adobe InDesign CS4"
 	set TMP to PDF export preset "TMP_indesign_v2"
 	-- Export settings are held by the application, not the document
 	
@@ -43,7 +43,7 @@ tell application "Finder"
 	end if
 end tell
 
-tell application "Adobe InDesign CS5.5"
+tell application "Adobe InDesign CS4"
 	tell document fileName
 		export format PDF type to (pdfsFolder & pdfName) using TMP
 	end tell
@@ -53,20 +53,19 @@ end tell
 -- Allows the left and right pages to be saved independently
 on pagePrompt(spreadPages)
 	set pagesList to {"Spread", "Left page only", "Right page only"}
+	set leftFileNum to the first character of spreadPages
+	set rightFileNum to the third character of spreadPages
 	
 	-- Customise the page prompt with the real page numbers (but not every page has one)
-	tell application "Adobe InDesign CS5.5"
+	tell application "Adobe InDesign CS4"
 		tell the active document
 			try -- Supresses error if text frame doesn't exist
-				set leftNum to the contents of text frame "L-Page number"
-				-- Check that is is a number ("X" used as a placeholder, and InDesign checks the masters if it doesn't find the frame on page)
-				get leftNum as number
+				set leftNum to the contents of text frame "L-Page number" of page leftFileNum
 				-- Append to page prompt
 				set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
 			end try
 			try
-				set rightNum to the contents of text frame "R-Page number"
-				get rightNum as number
+				set rightNum to the contents of text frame "R-Page number" of page rightFileNum
 				set item 3 of pagesList to (item 3 of pagesList & " (P" & rightNum & ")")
 			end try
 		end tell
@@ -78,9 +77,9 @@ on pagePrompt(spreadPages)
 	if chosenPage starts with "Spread" then
 		set exportPage to spreadPages
 	else if chosenPage starts with "Left page only" then
-		set exportPage to the first character of spreadPages
+		set exportPage to leftFileNum
 	else if chosenPage starts with "Right page only" then
-		set exportPage to the third character of spreadPages
+		set exportPage to rightFileNum
 	end if
 	
 	return exportPage
@@ -88,7 +87,7 @@ end pagePrompt
 
 
 on makePdfName(fileName)
-	tell application "Adobe InDesign CS5.5"
+	tell application "Adobe InDesign CS4"
 		set c to (count the pages in the active document)
 		set pageRange to (page range of PDF export preferences)
 		
