@@ -2,7 +2,7 @@
 
 -- Written by       Rob Wells
 -- Created on       2013-03-14
--- Last updated     2014-06-06
+-- Last updated     2014-06-07
 
 on run
 	set thePages to choose file with prompt ¬
