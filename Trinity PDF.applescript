@@ -4,6 +4,9 @@
 --	Created on		2012-07-07
 --	Last updated		2015-06-25
 
+global expected_date
+global each_date
+
 tell application "Adobe InDesign CS4"
 	-- Check the dates are correct before we export
 	my check_page_dates()
@@ -159,6 +162,7 @@ on check_page_dates()
 					set page_number to (item idx of target_pages)
 					set page_date to the contents of text frame (item idx of frame_names) of page page_number
 					repeat with each_date in page_date as list
+						set each_date to the contents of each_date -- Necessary to extract the string
 						if each_date is not expected_date then
 							display alert "Date is incorrect on page " & page_number as critical
 							set error_flag to true
