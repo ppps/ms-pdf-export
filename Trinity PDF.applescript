@@ -158,10 +158,12 @@ on check_page_dates()
 				try
 					set page_number to (item idx of target_pages)
 					set page_date to the contents of text frame (item idx of frame_names) of page page_number
-					if page_date is not expected_date then
-						display alert "Date is incorrect on page " & page_number as critical
-						set error_flag to true
-					end if
+					repeat with each_date in page_date as list
+						if each_date is not expected_date then
+							display alert "Date is incorrect on page " & page_number as critical
+							set error_flag to true
+						end if
+					end repeat
 				end try
 				if error_flag then
 					error number -128
