@@ -115,15 +115,15 @@ end makePdfName
 
 
 on create_pageDate(theDay, theMonth, theDate, theYear)
-	if theDay is not "Saturday" then -- Weekday pageDate
-		set pageDate to (theDay & " " & theMonth & " " & theDate & " " & theYear)
+	if theDay is not Saturday then -- Weekday pageDate
+		set pageDate to (theDay & " " & theMonth & " " & theDate & " " & theYear) as string
 
 	else -- Saturday/Sunday pageDate
 		-- Create a date object for Sunday
-		set sun to ((date (theDay & ", " & theDate & " " & theMonth & " " & theYear)) + (1 * days))
+		set sun to (date ((theDay & ", " & theDate & " " & theMonth & " " & theYear) as string)) + 1 * days
 
 		-- Check if the weekend spans a month boundary
-		if (sun's month as string) is not theMonth then
+		if (sun's month) is not theMonth then
 			-- Sunday month with trailing space
 			set secondMonth to (sun's month as string) & " "
 		else
@@ -131,7 +131,7 @@ on create_pageDate(theDay, theMonth, theDate, theYear)
 		end if
 
 		-- Check if the weekend spans a year boundary
-		if (sun's year as string) is not theYear then
+		if (sun's year) is not theYear then
 			-- Sunday year with leading hyphen
 			set secondYear to ("-" & (sun's year as string))
 		else
@@ -146,7 +146,7 @@ end create_pageDate
 
 on check_page_dates()
 	set tomorrow to (current date) + (1 * days)
-	set expected_date to create_pageDate(tomorrow's weekday as string, tomorrow's month, tomorrow's day, tomorrow's year as string)
+	set expected_date to create_pageDate(tomorrow's weekday, tomorrow's month, tomorrow's day, tomorrow's year)
 	set error_flag to false
 	tell application "Adobe InDesign CS4"
 		tell the front document
