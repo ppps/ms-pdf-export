@@ -2,10 +2,7 @@
 
 --	Written by		Rob Wells
 --	Created on		2012-07-07
---	Last updated		2015-06-25
-
-global expected_date
-global each_date
+--	Last updated		2015-06-28
 
 tell application "Adobe InDesign CS4"
 	-- Check the dates are correct before we export
@@ -18,11 +15,11 @@ tell application "Adobe InDesign CS4"
 	tell PDF export preferences -- Also an application-wide setting
 		-- Set the page range
 		if c is 1 then
-			set page range to "1" -- Single page is common
+			set page_range_list to {"1"} -- Single page is common
 		else if c is 2 then
-			set page range to (my pagePrompt("1-2")) -- 1-2 spread included for safety
+			set page_range_list to (my pagePrompt("1-2")) -- 1-2 spread included for safety
 		else if c is 3 then
-			set page range to (my pagePrompt("2-3")) -- 2-3 spread is common
+			set page_range_list to (my pagePrompt("2-3")) -- 2-3 spread is common
 		end if
 	end tell
 
@@ -34,8 +31,6 @@ end tell
 
 -- Extract the date from the filename
 set editionDate to text ((offset of "." in fileName) - 6) through ((offset of "." in fileName) - 1) of fileName
-
-set pdfName to my makePdfName(fileName)
 
 tell application "Finder"
 	-- Check if the PDF folder has already been created
@@ -49,30 +44,34 @@ tell application "Finder"
 end tell
 
 tell application "Adobe InDesign CS4"
-	tell document fileName
-		export format PDF type to (pdfsFolder & pdfName) using TMP
-	end tell
+	repeat with p in page_range_list
+		tell PDF export preferences to set page range to p
+		tell document fileName
+			set pdfName to my makePdfName(fileName, p)
+			export format PDF type to (pdfsFolder & pdfName) using TMP
+		end tell
+	end repeat
 end tell
 
 -- Ask the user which page to export if a spread
 -- Allows the left and right pages to be saved independently
 on pagePrompt(spreadPages)
 	set pagesList to {"Spread", "Left page only", "Right page only"}
-	set leftFileNum to the first character of spreadPages
-	set rightFileNum to the third character of spreadPages
+	set lpn to (character 1 of spreadPages) as number
+	set rpn to (character 3 of spreadPages) as number
 
 	-- Customise the page prompt with the real page numbers (but not every page has one)
 	tell application "Adobe InDesign CS4"
 		tell the active document
-			try -- Supresses error if text frame doesn't exist
-				set leftNum to the contents of text frame "L-Page number" of page leftFileNum
-				-- Append to page prompt
+			set leftNum to the contents of text frame "L-Page number" of page lpn
+			set rightNum to the contents of text frame "R-Page number" of page rpn
+
+			if leftNum is not "X" then
 				set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
-			end try
-			try
-				set rightNum to the contents of text frame "R-Page number" of page rightFileNum
+			end if
+			if rightNum is not "X" then
 				set item 3 of pagesList to (item 3 of pagesList & " (P" & rightNum & ")")
-			end try
+			end if
 		end tell
 	end tell
 
@@ -80,21 +79,20 @@ on pagePrompt(spreadPages)
 	if the result is "false" then error number -128 -- Enable the cancel button
 
 	if chosenPage starts with "Spread" then
-		set exportPage to spreadPages
+		set exportPage to {the first character of spreadPages, the third character of spreadPages}
 	else if chosenPage starts with "Left page only" then
-		set exportPage to leftFileNum
+		set exportPage to {the first character of spreadPages}
 	else if chosenPage starts with "Right page only" then
-		set exportPage to rightFileNum
+		set exportPage to {the third character of spreadPages}
 	end if
 
 	return exportPage
 end pagePrompt
 
 
-on makePdfName(fileName)
+on makePdfName(fileName, pageRange)
 	tell application "Adobe InDesign CS4"
 		set c to (count the pages in the active document)
-		set pageRange to (page range of PDF export preferences)
 
 		-- Split the filename at its page-number prefix
 		set thePrefix to (text 1 through ((offset of "_" in fileName) - 1) of fileName)
