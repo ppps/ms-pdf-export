@@ -2,7 +2,7 @@
 
 --	Written by		Rob Wells
 --	Created on		2012-07-07
---	Last updated		2015-06-28
+--	Last updated		2016-09-22
 
 tell application "Adobe InDesign CS4"
 	-- Check the dates are correct before we export
@@ -139,7 +139,7 @@ on create_pageDate(theDay, theMonth, theDate, theYear)
 		set pageDate to ("Saturday/Sunday " & theMonth & " " & theDate & "-" & secondMonth & (sun's day as string) & " " & theYear & secondYear)
 		-- Empty secondMonth/Year strings (set above) mean this can be used for every Saturday
 	end if
-    return pageDate
+	return pageDate
 end create_pageDate
 
 
