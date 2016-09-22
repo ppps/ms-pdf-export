@@ -139,6 +139,7 @@ on create_pageDate(theDay, theMonth, theDate, theYear)
 		set pageDate to ("Saturday/Sunday " & theMonth & " " & theDate & "-" & secondMonth & (sun's day as string) & " " & theYear & secondYear)
 		-- Empty secondMonth/Year strings (set above) mean this can be used for every Saturday
 	end if
+    return pageDate
 end create_pageDate
 
 
