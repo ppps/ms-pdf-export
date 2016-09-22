@@ -145,7 +145,6 @@ end create_pageDate
 on check_page_dates()
 	set tomorrow to (current date) + (1 * days)
 	set expected_date to create_pageDate(tomorrow's weekday, tomorrow's month, tomorrow's day, tomorrow's year)
-	set error_flag to false
 	tell application "Adobe InDesign CS4"
 		tell the front document
 			if the (count of pages) is greater than 1 then
@@ -156,20 +155,20 @@ on check_page_dates()
 				set frame_names to {"Edition date"}
 			end if
 			repeat with idx from 1 to (length of target_pages)
+				set page_number to (item idx of target_pages)
 				try
-					set page_number to (item idx of target_pages)
 					set page_date to the contents of text frame (item idx of frame_names) of page page_number
+
 					repeat with each_date in page_date as list
 						set each_date to the contents of each_date -- Necessary to extract the string
 						if each_date is not expected_date then
-							display alert "Date is incorrect on page " & page_number as critical
-							set error_flag to true
+							display dialog ("Date is incorrect on page " & page_number & ": " & each_date) buttons {"Stop", "Continue"} default button "Continue"
+							if the button returned of the result is "Stop" then error number -128
 						end if
 					end repeat
+				on error number -1728
+					-- Suppress error when there is no page date
 				end try
-				if error_flag then
-					error number -128
-				end if
 			end repeat
 		end tell
 	end tell
