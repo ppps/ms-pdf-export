@@ -179,7 +179,7 @@ end check_page_dates
 
 
 on expected_barcode_filename()
-    set prices to {2, 2, 2, 2, 2, 3, 6} -- Price codes for Monday through Sunday in order
+    set prices to {2, 2, 2, 2, 2, 3, 2} -- Price codes for Monday through Sunday in order
     set iso_weekday to do shell script ("date -jv+1d +%u")
     set barcode_front to do shell script ("date -jv+1d +Barcode_%G-W%V-%u_")
     set barcode_end to ((get item iso_weekday of prices) & iso_weekday & ".pdf") as string
