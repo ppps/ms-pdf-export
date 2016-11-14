@@ -4,11 +4,24 @@
 --  Created on      2012-07-07
 --  Last updated        2016-11-14
 
+
 tell application "Adobe InDesign CS4"
-    -- Check the dates are correct before we export
-    my check_page_dates()
-    -- Check the barcode filename
-    my check_barcode()
+    tell the active document
+        set filePath to the file path as string
+        set fileName to the name
+    end tell
+end tell
+
+-- Extract the date from the filename
+set editionDate to text ((offset of "." in fileName) - 6) through ((offset of "." in fileName) - 1) of fileName
+
+-- Perform date and barcode checks
+check_page_dates()
+check_file_date(editionDate)
+check_barcode()
+
+
+tell application "Adobe InDesign CS4"
     set TMP to PDF export preset "TMP_indesign_v2"
     -- Export settings are held by the application, not the document
 
@@ -23,11 +36,6 @@ tell application "Adobe InDesign CS4"
         else if c is 3 then
             set page_range_list to (my pagePrompt("2-3")) -- 2-3 spread is common
         end if
-    end tell
-
-    tell the active document
-        set filePath to the file path as string
-        set fileName to the name
     end tell
 end tell
 
@@ -204,3 +212,14 @@ on check_barcode()
         end tell
     end tell
 end check_barcode
+
+
+on check_file_date(edition_date)
+    set expected_date to do shell script "date -jv+1d +%d%m%y"
+    if edition_date is not expected_date then
+        tell application "Adobe InDesign CS4"
+            display dialog "The InDesign file's date (" & edition_date & ") does not match tomorrow's date. Please check and re-try." buttons ¬
+                {"Stop", "Continue"} default button "Continue" cancel button "Stop"
+        end tell
+    end if
+end check_file_date
