@@ -200,10 +200,10 @@ on check_barcode()
     tell application "Adobe InDesign CS4"
         tell the front document
             try
-                set barcode_filename to the name of the item link of the first graphic of page item "Barcode"
+                set barcode_filename to the name of the item link of the first graphic of page item "Barcode" of page 1
                 set expected to my expected_barcode_filename()
                 if barcode_filename is not expected then
-                    display dialog "The barcode appears to be incorrect. Please check and re-try." buttons ¬
+                    display dialog "The barcode appears to be incorrect for tomorrow." & return & "Expected: " & expected & return & "Found: " & barcode_filename & return & "Please check and re-try." buttons ¬
                         {"Stop", "Continue"} default button "Continue" cancel button "Stop"
                 end if
             on error number -1728
