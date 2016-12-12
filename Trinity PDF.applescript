@@ -2,7 +2,7 @@
 
 --  Written by      Rob Wells
 --  Created on      2012-07-07
---  Last updated        2016-11-14
+--  Last updated    2016-12-12
 
 
 tell application "Adobe InDesign CS4"
