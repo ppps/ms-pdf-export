@@ -43,6 +43,15 @@ end tell
 set date_sh to ("echo " & fileName & " | grep -E '\\d{6}' -o | tr -d \\n")
 set editionDate to do shell script date_sh
 
+-- Set prefix
+try
+    get the first character of fileName as number
+    set section_prefix to ""
+on error
+    set section_prefix to the first character of fileName
+end try
+
+
 tell application "Finder"
     -- Check if the PDF folder has already been created
     if (exists folder (filePath & "PDFs " & editionDate)) is false then
@@ -101,6 +110,7 @@ on pagePrompt(spreadPages)
 end pagePrompt
 
 
+global section_prefix
 on makePdfName(fileName, pageRange)
     tell application "Adobe InDesign CS4"
         set c to (count the pages in the active document)
@@ -109,16 +119,24 @@ on makePdfName(fileName, pageRange)
         set thePrefix to (text 1 through ((offset of "_" in fileName) - 1) of fileName)
         set theBody to (text (offset of "_" in fileName) through ((the length of fileName) - 5) of fileName)
 
+        set saveTID to AppleScript's text item delimiters
+        set AppleScript's text item delimiters to {"-"}
+        set page_numbers_list to the text items of thePrefix
+        set AppleScript's text item delimiters to saveTID
+        if the first character of the first item of page_numbers_list is section_prefix then
+            set orig_first_page to (the first item of page_numbers_list) as string
+            set the first item of page_numbers_list to (text 2 through (the length of orig_first_page) of fileName)
+        end if
+        set desired_page_number to item 1 of page_numbers_list
+
         -- Check if the user wants to export a single page from a multi-page file
         if (thePrefix contains "-") and (pageRange does not contain "-") then
             -- For spreads, the last page is a right-hand page, and therefore the second part of the page-number prefix
             if c is equal to (pageRange as number) then
-                set thePrefix to (text ((offset of "-" in thePrefix) + 1) through (the length of thePrefix)) of thePrefix
-            else
-                set thePrefix to (text 1 through ((offset of "-" in thePrefix) - 1) of thePrefix)
+                set desired_page_number to item 2 of page_numbers_list
             end if
         end if
-        return thePrefix & theBody & ".pdf"
+        return section_prefix & desired_page_number & theBody & ".pdf"
     end tell
 end makePdfName
 
