@@ -83,8 +83,8 @@ on pagePrompt(spreadPages)
     -- Customise the page prompt with the real page numbers (but not every page has one)
     tell application "Adobe InDesign CS4"
         tell the active document
-            set leftNum to the contents of text frame "L-Page number" of page lpn
-            set rightNum to the contents of text frame "R-Page number" of page rpn
+            set leftNum to the contents of text frame "L-Page number"
+            set rightNum to the contents of text frame "R-Page number"
 
             if leftNum is not "X" then
                 set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
