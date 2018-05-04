@@ -40,7 +40,8 @@ tell application "Adobe InDesign CS4"
 end tell
 
 -- Extract the date from the filename
-set editionDate to text ((offset of "." in fileName) - 6) through ((offset of "." in fileName) - 1) of fileName
+set date_sh to ("echo " & fileName & " | grep -E '\\d{6}' -o | tr -d \\n")
+set editionDate to do shell script date_sh
 
 tell application "Finder"
     -- Check if the PDF folder has already been created
