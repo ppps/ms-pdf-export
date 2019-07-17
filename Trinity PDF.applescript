@@ -39,9 +39,6 @@ tell application "Adobe InDesign CS4"
     end tell
 end tell
 
--- Extract the date from the filename
-set date_sh to ("echo " & fileName & " | grep -E '\\d{6}' -o | tr -d \\n")
-set editionDate to do shell script date_sh
 
 -- Set prefix
 try
