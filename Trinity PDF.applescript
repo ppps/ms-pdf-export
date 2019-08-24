@@ -2,10 +2,10 @@
 
 --  Written by      Rob Wells
 --  Created on      2012-07-07
---  Last updated    2018-05-08
+--  Last updated    2019-08-24
 
 
-tell application "Adobe InDesign CS4"
+tell application "Adobe InDesign CC 2019"
     tell the active document
         set filePath to the file path as string
         set fileName to the name
@@ -21,7 +21,7 @@ check_file_date(editionDate)
 check_barcode()
 
 
-tell application "Adobe InDesign CS4"
+tell application "Adobe InDesign CC 2019"
     set TMP to PDF export preset "TMP_indesign_v2"
     -- Export settings are held by the application, not the document
 
@@ -60,7 +60,7 @@ tell application "Finder"
     end if
 end tell
 
-tell application "Adobe InDesign CS4"
+tell application "Adobe InDesign CC 2019"
     repeat with p in page_range_list
         tell PDF export preferences to set page range to p
         tell document fileName
@@ -78,10 +78,10 @@ on pagePrompt(spreadPages)
     set rpn to (character 3 of spreadPages) as number
 
     -- Customise the page prompt with the real page numbers (but not every page has one)
-    tell application "Adobe InDesign CS4"
+    tell application "Adobe InDesign CC 2019"
         tell the active document
-            set leftNum to the contents of text frame "L-Page number"
-            set rightNum to the contents of text frame "R-Page number"
+            set leftNum to the contents of the first text frame whose label is "L-Page number"
+            set rightNum to the contents of the first text frame whose label is "R-Page number"
 
             if leftNum is not "X" then
                 set item 2 of pagesList to (item 2 of pagesList & " (P" & leftNum & ")")
@@ -109,7 +109,7 @@ end pagePrompt
 
 global section_prefix
 on makePdfName(fileName, pageRange)
-    tell application "Adobe InDesign CS4"
+    tell application "Adobe InDesign CC 2019"
         set c to (count the pages in the active document)
 
         -- Split the filename at its page-number prefix
@@ -213,10 +213,10 @@ end expected_barcode_filename
 
 
 on check_barcode()
-    tell application "Adobe InDesign CS4"
+    tell application "Adobe InDesign CC 2019"
         tell the front document
             try
-                set barcode_filename to the name of the item link of the first graphic of page item "Barcode" of page 1
+                set barcode_filename to the name of the (item link of (item 1 of (the graphics of (the first rectangle whose label is "Barcode"))))
                 set expected to my expected_barcode_filename()
                 if barcode_filename is not expected then
                     display dialog "The barcode appears to be incorrect for tomorrow." & return & "Expected: " & expected & return & "Found: " & barcode_filename & return & "Please check and re-try." buttons ¬
@@ -233,7 +233,7 @@ end check_barcode
 on check_file_date(edition_date)
     set expected_date to do shell script "date -jv+1d +%d%m%y"
     if edition_date is not expected_date then
-        tell application "Adobe InDesign CS4"
+        tell application "Adobe InDesign CC 2019"
             display dialog "The InDesign file's date (" & edition_date & ") does not match tomorrow's date. Please check and re-try." buttons ¬
                 {"Stop", "Continue"} default button "Continue" cancel button "Stop"
         end tell
