@@ -5,7 +5,7 @@
 --  Last updated    2019-08-24
 
 
-tell application "Adobe InDesign CC 2019"
+tell application id "com.adobe.InDesign"
     tell the active document
         set filePath to the file path as string
         set fileName to the name
@@ -21,7 +21,7 @@ check_file_date(editionDate)
 check_barcode()
 
 
-tell application "Adobe InDesign CC 2019"
+tell application id "com.adobe.InDesign"
     set TMP to PDF export preset "TMP_indesign_v2"
     -- Export settings are held by the application, not the document
 
@@ -60,7 +60,7 @@ tell application "Finder"
     end if
 end tell
 
-tell application "Adobe InDesign CC 2019"
+tell application id "com.adobe.InDesign"
     repeat with p in page_range_list
         tell PDF export preferences to set page range to p
         tell document fileName
@@ -78,7 +78,7 @@ on pagePrompt(spreadPages)
     set rpn to (character 3 of spreadPages) as number
 
     -- Customise the page prompt with the real page numbers (but not every page has one)
-    tell application "Adobe InDesign CC 2019"
+    tell application id "com.adobe.InDesign"
         tell the active document
             set leftNum to the contents of the first text frame whose label is "L-Page number"
             set rightNum to the contents of the first text frame whose label is "R-Page number"
@@ -109,7 +109,7 @@ end pagePrompt
 
 global section_prefix
 on makePdfName(fileName, pageRange)
-    tell application "Adobe InDesign CC 2019"
+    tell application id "com.adobe.InDesign"
         set c to (count the pages in the active document)
 
         -- Split the filename at its page-number prefix
@@ -172,7 +172,7 @@ end create_pageDate
 on check_page_dates()
     set tomorrow to (current date) + (1 * days)
     set expected_date to create_pageDate(tomorrow's weekday, tomorrow's month, tomorrow's day, tomorrow's year)
-    tell application "Adobe InDesign CC 2019"
+    tell application id "com.adobe.InDesign"
         tell the front document
             if the (count of pages) is greater than 1 then
                 set target_pages to {2, 3}
@@ -218,7 +218,7 @@ end expected_barcode_filename
 
 
 on check_barcode()
-    tell application "Adobe InDesign CC 2019"
+    tell application id "com.adobe.InDesign"
         tell the front document
             try
                 set barcode_filename to the name of the (item link of (item 1 of (the graphics of (the first rectangle whose label is "Barcode"))))
@@ -238,7 +238,7 @@ end check_barcode
 on check_file_date(edition_date)
     set expected_date to do shell script "date -jv+1d +%d%m%y"
     if edition_date is not expected_date then
-        tell application "Adobe InDesign CC 2019"
+        tell application id "com.adobe.InDesign"
             display dialog "The InDesign file's date (" & edition_date & ") does not match tomorrow's date. Please check and re-try." buttons ¬
                 {"Stop", "Continue"} default button "Continue" cancel button "Stop"
         end tell
